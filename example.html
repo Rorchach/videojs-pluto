@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>video.js HLS Plugin Example</title>
+
+  <link href="node_modules/video.js/dist/video-js.css" rel="stylesheet">
+
+  <!-- video.js -->
+  <script src="node_modules/video.js/dist/video.js"></script>
+
+  <!-- Media Sources plugin -->
+  <script src="node_modules/videojs-contrib-media-sources/src/videojs-media-sources.js"></script>
+  <script>
+    videojs.MediaSource.webWorkerURI = 'node_modules/videojs-contrib-media-sources/src/transmuxer_worker.js';
+  </script>
+
+  <!-- HLS plugin -->
+  <script src="src/videojs-hls.js"></script>
+
+  <!-- m3u8 handling -->
+  <script src="src/xhr.js"></script>
+  <script src="src/stream.js"></script>
+  <script src="src/m3u8/m3u8-parser.js"></script>
+  <script src="src/playlist.js"></script>
+  <script src="src/playlist-loader.js"></script>
+
+  <script src="node_modules/pkcs7/dist/pkcs7.unpad.js"></script>
+  <script src="src/decrypter.js"></script>
+
+  <script src="src/bin-utils.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .info {
+      background-color: #eee;
+      border: thin solid #333;
+      border-radius: 3px;
+      padding: 0 5px;
+      margin: 20px 0;
+    }
+  </style>
+
+</head>
+<body>
+  <div class="info">
+    <p>The video below is an <a href="https://developer.apple.com/library/ios/documentation/networkinginternet/conceptual/streamingmediaguide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008332-CH1-SW1">HTTP Live Stream</a>. On desktop browsers other than Safari, the HLS plugin will polyfill support for the format on top of the video.js Flash tech.</p>
+    <p>Due to security restrictions in Flash, you will have to load this page over HTTP(S) to see the example in action.</p>
+  </div>
+  <video id="video"
+         class="video-js vjs-default-skin"
+         height="300"
+         width="600"
+         controls>
+    <source
+       src="http://tblivestream.baidu.com/live/6d5dcff7a25d5e4238e079465dc62948.m3u8?room_id=5000009&sign=d16bfe62af4b26688fdc09ce8b434a0e&bduss=Mfby%2BrzLKp%2B9AnMHefb47Y8zdkhaRKBLEtm7IoqWDSdj9GRh1dlMdlo5rukqymkZMMIKIMpd2i4RGDUlvqOjloKh6iofXWe1uL%2BSAmnj7yip6%2BszxmOG6QKF%2FTi4pP55oh18KK4btl9dXvwFU8h4E2VejPVrmi253NmvSuujo7e1AHvQ6lhqJBv%2FjUzSw1UOesQhARDtOmRPzZEXUJ4nf4qrcKncWUCWgOeNF%2BUt8CbWj0czfd1vvBhnbpppNj5t"
+       type="application/x-mpegURL">
+  </video>
+  <script>
+    videojs.options.flash.swf = 'node_modules/videojs-swf/dist/video-js.swf';
+    // initialize the player
+    var player = videojs('video');
+  </script>
+</body>
+</html>
