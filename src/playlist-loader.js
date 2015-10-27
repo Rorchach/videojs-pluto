@@ -421,7 +421,7 @@
     while (i--) {
       segment = this.media_.segments[i];
 
-      if (i!==0) {
+      if (i!==0 && segment) {
         delete segment.start;
         delete segment.end;
       }

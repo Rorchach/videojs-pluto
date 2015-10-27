@@ -4,6 +4,9 @@ A video.js tech that plays HLS video on platforms that don't support it but have
 
 [![Build Status](https://travis-ci.org/videojs/videojs-contrib-hls.svg?branch=master)](https://travis-ci.org/videojs/videojs-contrib-hls)
 
+## 构建
+grunt build 取dist目录的文件
+
 ## Getting Started
 Download [videojs-contrib-media-sources](https://github.com/videojs/videojs-contrib-media-sources/releases) and [videojs-contrib-hls](https://github.com/videojs/videojs-contrib-hls/releases). Include them both in your web page along with video.js:
 
