@@ -70,6 +70,7 @@ videojs.Hls = videojs.extend(Component, {
       this.setCurrentTime(this.tech_.currentTime());
     });
     this.on(this.tech_, 'error', function() {
+      console.lig('error stop');
       this.stopCheckingBuffer_();
     });
 
@@ -230,6 +231,9 @@ videojs.Hls.prototype.handleSourceOpen = function() {
 // Returns the array of time range edge objects that were additively
 // modified between two TimeRanges.
 videojs.Hls.bufferedAdditions_ = function(original, update) {
+  console.log('===----====');
+  console.log('bufferedAdditions_', 'original', original.length, original);
+  console.log('bufferedAdditions_', 'update', update.length, update);
   var result = [], edges = [],
       i, inOriginalRanges;
 
@@ -248,6 +252,7 @@ videojs.Hls.bufferedAdditions_ = function(original, update) {
     edges.push({ start: update.start(i) });
     edges.push({ end: update.end(i) });
   }
+  console.log('bufferedAdditions_', 'edges', edges.length, edges);
   edges.sort(function(left, right) {
     var leftTime, rightTime;
     leftTime = left.start !== undefined ? left.start : left.end;
@@ -676,15 +681,34 @@ videojs.Hls.prototype.findCurrentBuffered_ = function() {
   if (buffered && buffered.length) {
     // Search for a range containing the play-head
     for (i = 0; i < buffered.length; i++) {
+      currentTime = Math.ceil(currentTime*10)/10;
+      console.log(buffered.start(i), currentTime, buffered.end(i));
+
+      if (i>0) {
+        if (currentTime >= buffered.end(i-1) && currentTime < buffered.start(i) ) {
+          this.tech_.setCurrentTime(buffered.start(i));
+        }
+      }
+
       if (buffered.start(i) <= currentTime &&
-          buffered.end(i) >= currentTime) {
+          buffered.end(i) > currentTime) {
         ranges = videojs.createTimeRanges(buffered.start(i), buffered.end(i));
         ranges.indexOf = i;
         return ranges;
       }
     }
   }
-
+  
+  /**
+   * 没有资源时，加上waiting状态
+   * @author hooke
+   */
+  
+  var _player = videojs(tech.options_.playerId);
+  if (_player.hasStarted()) {
+    _player.handleTechWaiting_();  
+  }
+  
   // Return an empty range if no ranges exist
   ranges = videojs.createTimeRanges();
   ranges.indexOf = -1;
@@ -741,10 +765,13 @@ videojs.Hls.prototype.fillBuffer = function(seekToTime) {
   // find the next segment to download
   if (typeof seekToTime === 'number') {
     mediaIndex = this.playlists.getMediaIndexForTime_(seekToTime);
+    console.log('type 1');
   } else if (currentBuffered && currentBuffered.length) {
+    console.log('type 2');
     mediaIndex = this.playlists.getMediaIndexForTime_(currentBuffered.end(0));
     bufferedTime = Math.max(0, currentBuffered.end(0) - currentTime);
   } else {
+    console.log('type 3');
     mediaIndex = this.playlists.getMediaIndexForTime_(this.tech_.currentTime());
   }
 
@@ -887,12 +914,15 @@ videojs.Hls.prototype.loadSegment = function(segmentInfo) {
     }
 
     self.setBandwidth(request);
-
+console.log('############################那扇窗是让我坚强的理由##########################################');
+console.log('after downloaded ts', request);
+console.log('after downloaded ts', segment);
     if (segment.key) {
       segmentInfo.encryptedBytes = new Uint8Array(request.response);
     } else {
       segmentInfo.bytes = new Uint8Array(request.response);
     }
+console.log('after downloaded ts', segmentInfo.bytes);
     self.pendingSegment_ = segmentInfo;
     self.tech_.trigger('progress');
     self.drainBuffer();
@@ -1010,11 +1040,9 @@ videojs.Hls.prototype.drainBuffer = function(event) {
     this.sourceBuffer.appendWindowStart = 0;
   }
   this.pendingSegment_.buffered = this.tech_.buffered();
+  console.log('segmentInfo', segmentInfo.bytes);
 
   // the segment is asynchronously added to the current buffered data
-  if (this.bandwidth < 999999) {
-    debugger;
-  }
   this.sourceBuffer.appendBuffer(bytes);
 };
 

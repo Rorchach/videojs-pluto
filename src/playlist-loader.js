@@ -422,7 +422,7 @@
       segment = this.media_.segments[i];
 
       if (i!==0 && segment) {
-        delete segment.start;
+        // delete segment.start;
         delete segment.end;
       }
 
@@ -434,23 +434,25 @@
           break;  
         }
       }
-      if (segment.start !== undefined && segment.start < time) {
-
-        if (segment.end !== undefined && segment.end > time) {
-          // we've found the target segment exactly
-          return i;
-        }
-
-        time -= segment.start;
-        time -= segment.duration || targetDuration;
-        if (time < 0) {
-          // the segment with start information is also our best guess
-          // for the momment
-          console.log('return i;');
-          return i;
-        }
-        break;
-      }
+//       if (segment.start !== undefined && segment.start < time) {
+// debugger;
+//         if (segment.end !== undefined && segment.end > time) {
+//           // we've found the target segment exactly
+//           return i;
+//         }
+// console.log(segment.start);
+//         time -= segment.start;
+//         time -= segment.duration || targetDuration;
+//         console.log('inging', segment, time);
+//         // if (time < 0) {
+//         if (time < 1) {
+//           // the segment with start information is also our best guess
+//           // for the momment
+//           console.log('return i;');
+//           return i;
+//         }
+//         break;
+//       }
     }
     i++;
 
